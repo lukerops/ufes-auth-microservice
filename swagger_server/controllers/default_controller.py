@@ -62,3 +62,13 @@ def verify_token_get():  # noqa: E501
     :rtype: None
     """
     return 'do some magic!'
+
+def identify_token_get():  # noqa: E501
+    """Retorna o id associado ao token de acesso
+
+     # noqa: E501
+
+
+    :rtype: int64
+    """
+    return 'do some magic!'

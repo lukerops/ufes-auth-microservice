@@ -40,6 +40,18 @@ paths:
       security:
       - basicAuth: []
       x-openapi-router-controller: swagger_server.controllers.default_controller
+  /identify_token:
+    get:
+      summary: Retorna o id associado ao token de acesso recebido
+      operationId: identify_token_get
+      responses:
+        "200":
+          description: ID do user
+        "401":
+          description: Token inválido
+      security:
+      - basicAuth: []
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /register:
     post:
       summary: Registra novo usuário

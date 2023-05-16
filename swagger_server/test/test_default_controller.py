@@ -68,6 +68,16 @@ class TestDefaultController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_identify_token_get(self):
+        """Test case for identify_token_get
+
+        Retorna o id associado ao token de acesso
+        """
+        response = self.client.open(
+            '/api/v1/identify_token',
+            method='GET')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
 
 if __name__ == '__main__':
     import unittest
