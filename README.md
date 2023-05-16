@@ -45,5 +45,5 @@ To run the server on a Docker container, please execute the following from the r
 docker build -t swagger_server .
 
 # starting up a container
-docker run -p 8080:8080 swagger_server
+docker run --rm --name swagger_server_cont -p 8080:8080 swagger_server
 ```
