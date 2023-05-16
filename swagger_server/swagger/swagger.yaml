@@ -1,0 +1,144 @@
+openapi: 3.0.0
+info:
+  title: Auth API
+  description: API para autenticação e gerenciamento de usuários
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/api/v1
+  description: Local server
+security:
+- basicAuth: []
+paths:
+  /login:
+    post:
+      summary: Realiza login e retorna token de acesso
+      operationId: login_post
+      requestBody:
+        description: Credenciais de login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login_body'
+        required: true
+      responses:
+        "200":
+          description: Token de acesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /verify_token:
+    get:
+      summary: Verifica se o token de acesso é válido
+      operationId: verify_token_get
+      responses:
+        "200":
+          description: Token válido
+        "401":
+          description: Token inválido
+      security:
+      - basicAuth: []
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /register:
+    post:
+      summary: Registra novo usuário
+      operationId: register_post
+      requestBody:
+        description: Dados do usuário a ser registrado
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "201":
+          description: Usuário registrado com sucesso
+        "400":
+          description: Dados inválidos
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /change_password:
+    put:
+      summary: Altera senha do usuário autenticado
+      operationId: change_password_put
+      requestBody:
+        description: Senhas antiga e nova do usuário
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPassword'
+        required: true
+      responses:
+        "200":
+          description: Senha alterada com sucesso
+        "401":
+          description: Credenciais inválidas
+      security:
+      - basicAuth: []
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: Token de acesso do usuário autenticado
+      example:
+        access_token: access_token
+    User:
+      required:
+      - email
+      - name
+      - password
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador único do usuário
+          format: int64
+        name:
+          type: string
+          description: Nome do usuário
+        email:
+          type: string
+          description: Email do usuário
+          format: email
+        password:
+          type: string
+          description: Senha do usuário
+          format: password
+    NewPassword:
+      required:
+      - new_password
+      - old_password
+      type: object
+      properties:
+        old_password:
+          type: string
+          description: Senha antiga do usuário
+          format: password
+        new_password:
+          type: string
+          description: Nova senha do usuário
+          format: password
+    login_body:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email do usuário
+          format: email
+        password:
+          type: string
+          description: Senha do usuário
+          format: password
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      x-basicInfoFunc: swagger_server.controllers.authorization_controller.check_basicAuth
+
