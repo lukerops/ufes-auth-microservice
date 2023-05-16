@@ -1,11 +1,8 @@
 FROM python:3.6-alpine
 
-RUN mkdir -p /usr/src/app
+COPY requirements.txt .
+RUN mkdir -p /usr/src/app && mv requirements.txt /usr/src/app && cd /usr/src/app && pip3 install --no-cache-dir -r requirements.txt
 WORKDIR /usr/src/app
-
-COPY requirements.txt /usr/src/app/
-
-RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /usr/src/app
 
