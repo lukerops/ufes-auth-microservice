@@ -1,0 +1,28 @@
+# Use a imagem base do MySQL
+FROM mysql:8.0.30
+
+# Defina o diretório de trabalho como /app/
+WORKDIR /app/
+
+# Copie o diretório atual para o diretório /app/ do contêiner
+# COPY ./ ./
+
+# Instale as dependências necessárias, se houver
+
+# Defina as variáveis de ambiente
+ENV MYSQL_USER=user
+ENV MYSQL_PASSWORD=user
+ENV MYSQL_ROOT_PASSWORD=user
+ENV MYSQL_DATABASE=Auth_Base
+ENV MYSQL_INITDB_SKIP_TZINFO=true
+
+# Exponha a porta necessária, se necessário
+# EXPOSE <porta>
+
+# Defina o volume persistente
+VOLUME /var/lib/mysql
+
+# Execute qualquer comando adicional, se necessário
+
+# Comando de inicialização do contêiner
+CMD ["mysqld"]
