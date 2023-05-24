@@ -75,3 +75,16 @@ http://localhost:8080/api/v1/ui/
 ```
 http://localhost:8080/api/v1/swagger.json
 ```
+
+<details>
+<summary><h3>Acesso aos Logs</h3></summary>
+
+- Para acessar o log de execução do container banco de dados:
+
+> docker logs auth_mysql_cont
+
+- Para acessar o log de execução do container com aplicação python:
+
+> docker logs swagger_server_cont
+
+</details>
