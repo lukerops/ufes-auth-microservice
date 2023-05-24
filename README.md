@@ -59,8 +59,7 @@ chmod 755 BuildImages.sh RunContainers.sh StopContainers.sh
 
 ```bash
 #Execute to run containers and set server up:
-./RunContainers.sh #--noLog
-# o argumento "--noLog" pode ser utilizado caso não queria a criação de arquivos de log para os contâiners.
+./RunContainers.sh
 
 #Execute to stop and remove containers:
 ./StopContainers.sh
@@ -68,11 +67,11 @@ chmod 755 BuildImages.sh RunContainers.sh StopContainers.sh
 
 - You'll find your server running at:
 ```
-http://172.22.0.2:8080/api/v1/ui/
+http://localhost:8080/api/v1/ui/
 ```
 
 - Your Swagger definition lives here:
 
 ```
-http://172.22.0.2:8080/api/v1/swagger.json
+http://localhost:8080/api/v1/swagger.json
 ```

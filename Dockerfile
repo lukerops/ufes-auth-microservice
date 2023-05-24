@@ -16,10 +16,10 @@ RUN python3 -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
 # Atualize o pip
-RUN pip install --upgrade pip
+RUN pip3 install --upgrade pip
 
 # Instale as dependências no ambiente virtual
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Etapa final da imagem
 FROM python:3.6-alpine
@@ -37,6 +37,6 @@ COPY . .
 EXPOSE 8080
 
 # Defina o comando de inicialização do contêiner para executar o módulo swagger_server
-ENTRYPOINT ["/venv/bin/python"]
+ENTRYPOINT ["/venv/bin/python3"]
 
 cmd ["-m", "swagger_server"]
