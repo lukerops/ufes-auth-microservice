@@ -13,14 +13,25 @@ jobs:
     name: build and test
     runs-on: ubuntu-latest
     container: 
-      image: lorisleiva/laravel-docker:7.4
+      image: kirschbaumdevelopment/laravel-test-runner:8.1
+    
+    services:
+      mysql:
+        image: mysql:5.7.22
+      env:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: laravel
+      ports:
+        - 33306:3306
+      options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
     - name: Install Dependencies
-      run: composer install --no-scripts --prefer-dist --no-progress --no-suggest
+      run: composer install --no-scripts
     - name: Generate key
       run: php artisan key:generate
     - name: Migrate tables
