@@ -1,0 +1,41 @@
+name: artisan
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+    
+  workflow_dispatch:
+
+jobs:
+
+  build_and_test:
+    name: build and test
+    runs-on: ubuntu-latest
+    container:
+      image: kirschbaumdevelopment/laravel-test-runner:8.1
+
+    services:
+      db:
+        image: mysql:5.7.22
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: laravel
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        ports:
+          - 3306:3306
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+    - name: Install Dependencies
+      run: composer install --no-scripts
+    - name: Generate key
+      run: php artisan key:generate
+    - name: Migrate tables
+      run: php artisan migrate
+    - name: Run Tests
+      run: php artisan test
