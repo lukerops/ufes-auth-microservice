@@ -1,14 +1,42 @@
-FROM python:3.6-alpine
+FROM php:8.1-fpm
 
-COPY requirements.txt .
-RUN mkdir -p /usr/src/app && mv requirements.txt /usr/src/app && cd /usr/src/app && pip3 install --no-cache-dir -r requirements.txt && rm requirements.txt && useradd test
-USER test
-WORKDIR /usr/src/app
+# set your user name, ex: user=bernardo
+ARG user=eric
+ARG uid=1000
 
-EXPOSE 8080
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
 
-ENTRYPOINT ["python3"]
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-CMD ["-m", "swagger_server"]
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
 
-COPY . /usr/src/app
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Create system user to run Composer and Artisan Commands
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
+
+# Install redis
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
+# Set working directory
+WORKDIR /var/www
+
+# Copy custom configurations PHP
+COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+
+USER $user
