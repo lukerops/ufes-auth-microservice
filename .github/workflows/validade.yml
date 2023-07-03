@@ -1,0 +1,29 @@
+name: artisan
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  test:
+    name: test
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup and Run Tests
+        run:  |
+          cp .env.example .env
+          docker-compose up -d
+          docker-compose exec app bash
+          composer install
+          php artisan key:generate
+          php artisan migrate
+          php artisan test
