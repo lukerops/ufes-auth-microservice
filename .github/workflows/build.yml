@@ -34,6 +34,10 @@ jobs:
   #   - name: Run Tests
   #     run: php artisan test
 
+    permissions:
+    contents: read
+    packages: write
+    
   build:
     name: Build and push docker image
     runs-on: ubuntu-latest
