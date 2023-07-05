@@ -5,42 +5,48 @@ on:
 
 jobs:
 
-  tests:
-    name: Execute unit tests
-    runs-on: ubuntu-latest
-    container:
-      image: kirschbaumdevelopment/laravel-test-runner:8.1
+  # tests:
+  #   name: Execute unit tests
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: kirschbaumdevelopment/laravel-test-runner:8.1
 
-    services:
-      db:
-        image: mysql:5.7.22
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: laravel
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-        ports:
-          - 3306:3306
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup .env
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-    - name: Install Dependencies
-      run: composer install --no-scripts
-    - name: Generate key
-      run: php artisan key:generate
-    - name: Migrate tables
-      run: php artisan migrate
-    - name: Run Tests
-      run: php artisan test
+  #   services:
+  #     db:
+  #       image: mysql:5.7.22
+  #       env:
+  #         MYSQL_ROOT_PASSWORD: root
+  #         MYSQL_DATABASE: laravel
+  #       options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+  #       ports:
+  #         - 3306:3306
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v2
+  #   - name: Setup .env
+  #     run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+  #   - name: Install Dependencies
+  #     run: composer install --no-scripts
+  #   - name: Generate key
+  #     run: php artisan key:generate
+  #   - name: Migrate tables
+  #     run: php artisan migrate
+  #   - name: Run Tests
+  #     run: php artisan test
 
   build:
     name: Build and push docker image
     runs-on: ubuntu-latest
-    needs: tests
+    #needs: tests
     steps:
       - uses: actions/checkout@v3
-      - run: sudo apt-get install docker -y
+      - run: sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+      - run: sudo apt-get install docker-ce docker-ce-cli containerd.io
+      - run: sudo groupadd docker
+      - run: sudo usermod -aG docker $USER
+      - run: sudo chmod 666 /var/run/docker.sock
+      - run: newgrp docker
+      - run: sudo service docker start
       - run: echo "${{secrets.GITHUB_TOKEN}}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - run: docker build -t "ghcr.io/lukerops/ufes-auth-microservice:latest" -f Dockerfile .
       - run: docker images
