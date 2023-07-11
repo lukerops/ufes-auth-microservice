@@ -12,7 +12,7 @@ Para tanto, utilizamos dois containers: um pro laravel e outro pro banco de dado
 Clone o repositório do projeto
 
 ```sh
-git clone https://github.com/EricRabelo/Auth-Micro-Service.git laravel-10
+git clone https://github.com/lukerops/ufes-auth-microservice.git laravel-10
 ```
 
 Entre na pasta criada
