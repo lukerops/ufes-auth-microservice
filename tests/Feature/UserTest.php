@@ -9,8 +9,6 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use RefreshDatabase;
-
     /**
      * Test if can create a user by api route
      *
@@ -28,6 +26,7 @@ class UserTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        User::find($response->json()['id'])->delete();
     }
 
     /**
@@ -69,6 +68,9 @@ class UserTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -117,6 +119,11 @@ class UserTest extends TestCase
             'email' => $update_user->email,
             'registration' => $update_user->registration,
         ]);
+
+        $update_user->tokens()->delete();
+        $update_user->delete();
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -147,6 +154,9 @@ class UserTest extends TestCase
         $this->assertDatabaseMissing('users', [
             'id' => $user->id,
         ]);
+
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -185,6 +195,11 @@ class UserTest extends TestCase
         $this->assertDatabaseHas('users', [
             'id' => $delete_user->id,
         ]);
+
+        $delete_user->tokens()->delete();
+        $delete_user->delete();
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -208,6 +223,9 @@ class UserTest extends TestCase
             'email' => $user->email,
             'registration' => $user->registration,
         ]);
+
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -242,6 +260,9 @@ class UserTest extends TestCase
             'email' => $user->email,
             'registration' => $user->registration,
         ]);
+
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -266,6 +287,7 @@ class UserTest extends TestCase
             'registration' => $user->registration,
         ]);
 
+        $user->tokens()->delete();
         $user->delete();
 
         $this->assertDatabaseMissing('users', [

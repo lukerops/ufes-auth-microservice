@@ -9,8 +9,6 @@ use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
-    use RefreshDatabase;
-
     /**
      * Test if the user can login successfully
      *
@@ -23,7 +21,7 @@ class AuthTest extends TestCase
         $email = $faker->email;
         $password = $faker->password;
 
-        User::factory()->create([
+        $user = User::factory()->create([
             'email' => $email,
             'password' => bcrypt($password),
         ]);
@@ -34,6 +32,9 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -75,6 +76,9 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson(['email' => $email]);
+
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -119,6 +123,9 @@ class AuthTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertNotEquals($initial_token->id, $final_token->id);
+
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
@@ -163,6 +170,9 @@ class AuthTest extends TestCase
 
         $tokens = $user->tokens();
         $this->assertEquals(0, $tokens->count());
+        
+        $user->tokens()->delete();
+        $user->delete();
     }
 
     /**
