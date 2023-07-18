@@ -1,0 +1,52 @@
+FROM php:8.1-fpm
+
+# set your user name, ex: user=bernardo
+
+ENV UID=1000
+ENV GID=1000
+
+#cria pasta
+RUN mkdir -p /var/www/
+
+#define pasta de trabalho
+WORKDIR /var/www/
+
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+RUN delgroup dialout
+
+RUN addgroup -g ${GID} --system laravel && \
+    adduser -G laravel ${UID} --system -D -s /bin/sh -u ${UID} laravel
+
+#altera usuário padrão do php-fpm
+RUN sed -i "s/user www-data/user laravel/g" /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i "s/group www-data/group laravel/g" /usr/local/etc/php-fpm.d/www.conf
+
+RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
+
+# Clear cache & install PHP extensions
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd sockets
+
+# Install redis
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
+# Copia conteúdo local pra dentro do WORKDIR do container
+ COPY . .
+
+USER laravel
+
+CMD []
